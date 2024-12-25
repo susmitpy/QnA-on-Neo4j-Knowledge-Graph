@@ -10,6 +10,7 @@ Use only the following schema:
 
 {schema}
 
+Only the above Labels are present in the database, don't use any other labels in query.
 Only return the cypher query to retrieve data. Don't return anything else. Prefer unique_id to match the specific nodes
 """
 
