@@ -221,9 +221,6 @@ def search_nodes(user_query: str, top_k: int = 10) -> list[tuple[str, Node, floa
         user_query (str): The user's search query.
         top_k (int): The number of top results to return from each index.
     """
-    # Lowercase the user's query
-    user_query = user_query.lower()
-
     # Split the query into individual words
     words = user_query.split(" ")
 
