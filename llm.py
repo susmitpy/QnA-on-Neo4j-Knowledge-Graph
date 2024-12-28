@@ -4,8 +4,8 @@ LOCAL = False
 
 if LOCAL:
     model_params = {
-        "temperature": 0.95,
-        "top_p": 0.95,
+        "temperature": 0.2,
+        "top_p": 0.9,
         "max_gen_len": 2048,
     }
 
@@ -28,9 +28,14 @@ else:
     )
 
     model_params = {
-        "temperature": 0.95,
-        "top_p": 0.95,
+        "temperature": 0.2,
+        "top_p": 0.9,
         "max_gen_len": 2048,
+    }
+
+    model_dict = {
+        "llama3.3 70": "Llama-3.3-70B-Instruct",
+        "llama3.1 8": "Meta-Llama-3.1-8B-Instruct"
     }
 
     class LLM:
@@ -40,7 +45,7 @@ else:
                     SystemMessage(content=""""""),
                     UserMessage(content=prompt),
                 ],
-                model="Llama-3.3-70B-Instruct",
+                model=model_dict["llama3.3 70"],
                 temperature=model_params["temperature"],
                 max_tokens=model_params["max_gen_len"],
                 top_p=model_params["top_p"],

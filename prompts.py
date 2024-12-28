@@ -1,31 +1,43 @@
 GET_ADDITIONAL_INFO = """
-The user asked the query
+The user asked the query:
 {user_query}
-You have the information about the relevant nodes in the query
+
+You have the information about the relevant nodes in the query:
 {info}
 
-Write a Cypher query to answer the user's question from a large Neo4j knowledge graph. 
-Make sure to properly use properties to only match relevant nodes and relationships to avoid ambiguity.
-Use only the following schema:
+Write a Cypher query to answer the user's question from a large Neo4j knowledge graph.
 
+Use the following schema:
 {schema}
 
-Only the above Labels are present in the database, don't use any other labels in query.
-Only return the cypher query to retrieve data. Don't return anything else. Prefer unique_id to match the specific nodes
+Make sure to:
+- Match nodes and relationships precisely using their properties and the schema.
+- For relationships like `IS_SPOUSE_OF`, which are inherently bidirectional, ensure your query accounts for both directions by using an undirected relationship pattern (`-[:IS_SPOUSE_OF]-`) to avoid missing data.
+- Avoid unnecessary or ambiguous matches. Use properties such as `unique_id` to target specific nodes and ensure accuracy.
+- Use only the Labels and relationships specified in the schema. Do not include any additional or unsupported labels or relationships.
+- Only return the Cypher query to retrieve the data, and do not include explanations or any additional output.
+
 """
 
 GET_FINAL_ANSWER = """
-The user asked the query
+The user asked the query:
 {user_query}
-Given information about the relevant nodes
+
+Given information about the relevant nodes:
 {info}
-Cypher query used to fetch additional information
+
+Cypher query used to fetch additional information:
 {cypher_query}
-for the schema
+
+For the schema:
 {schema}
 
-the query returned
+The query returned:
 {cypher_query_result}
 
-Answer the user's query {user_query} in natural language based only on the above
+Answer the user's query:
+
+- Provide a concise, human-friendly response based only on the query result.
+- For relationships like `IS_SPOUSE_OF`, which are inherently bidirectional, ensure you use the data as undirected and account for both directions in the context of the result.
+- Base your answer strictly on the provided schema, query result, and context. Avoid adding assumptions or external information.
 """

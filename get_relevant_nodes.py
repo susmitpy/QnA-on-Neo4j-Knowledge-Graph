@@ -26,6 +26,6 @@ def get_relevant_nodes(user_query: str) -> list[tuple[str, dict]]:
 
 user_query = "Which group is Jethalal's son a part of ?"
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.info)
     nodes = get_relevant_nodes(user_query)
     print(nodes)

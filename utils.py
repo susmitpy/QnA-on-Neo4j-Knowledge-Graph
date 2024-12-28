@@ -17,7 +17,7 @@ def extract_cleaned_cypher(resp_content: str) -> str:
         str: A string containing the extracted and formatted Cypher query, or an empty string if not found.
     """
     resp_content = resp_content.strip()
-    logging.debug(resp_content)
+    logging.info(resp_content)
 
     # Check if the response content is a raw Cypher query
     if resp_content.lower().startswith("match"):
@@ -84,7 +84,7 @@ Nodes:
   - name
 
 Relationships:
-- IS_SPOUSE_OF: Person -> Person
+- IS_SPOUSE_OF: Person - Person
 - IS_PARENT_OF: Person -> Person
 - IS_PART_OF: Person -> Group
 - IS_OWNER_OF: Person -> Company
@@ -92,5 +92,5 @@ Relationships:
     return schema.strip()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.info)
     test_extract_cleaned_cypher()
