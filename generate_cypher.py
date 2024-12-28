@@ -1,5 +1,5 @@
 from prompts import GET_ADDITIONAL_INFO
-from utils import extract_cleaned_cypher, get_schema_text, prepare_info_str
+from utils import extract_cleaned_cypher, get_schema_text, prepare_info_str, get_bi_der_relationships
 from llm import llm
 import logging
 
@@ -7,7 +7,8 @@ def generate_cypher(user_query: str, info: list[tuple[str, dict]]):
     prompt = GET_ADDITIONAL_INFO.format(
         user_query=user_query,
         info=prepare_info_str(info=info),
-        schema=get_schema_text()
+        schema=get_schema_text(),
+        bidir_rels=get_bi_der_relationships()
     )
 
     logging.info(prompt)

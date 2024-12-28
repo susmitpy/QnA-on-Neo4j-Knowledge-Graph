@@ -1,5 +1,5 @@
-from models import Person, Group, Company
-from neomodel import config
+from models import Person, Group, Company, Society
+from neomodel import config, RelationshipTo
 
 # Configure the connection to Neo4j
 config.DATABASE_URL = 'bolt://neo4j:neotest123@localhost:7687'
@@ -76,6 +76,10 @@ def create_nodes():
     anjali.groups.connect(mahila_mandal)
     babita.groups.connect(mahila_mandal)
 
+    gokuldham: Society = Society(name="Gokuldham Society, Pavdar Galli, Goregaon East").save()
+    gokuldham.committee_members.connect(aatmaram, {"position": "Secretary"})
+    gokuldham.committee_members.connect(krishnan, {"position": "Treasurer"})
+    gokuldham.committee_members.connect(popatlal, {"position": "Member"})
 
 
 if __name__ == "__main__":

@@ -84,6 +84,13 @@ def create_vector_index():
     """
     execute_cypher_query(query)
 
+    # Create vector index for HasCommitteeMember relationship
+    query = """
+    CREATE VECTOR INDEX `has-committee-member-embeddings`
+    FOR () - [r:HAS_COMMITTEE_MEMBER] - () ON (r.embedding)
+    """
+    execute_cypher_query(query)
+
 STOP_WORDS = {'i',
  'me',
  'my',
@@ -212,7 +219,7 @@ STOP_WORDS = {'i',
  'should',
  'now'}
 
-def search_nodes(user_query: str, top_k: int = 10) -> list[tuple[str, Node, float]]:
+def search_nodes(user_query: str, top_k: int = 10) -> list[tuple[str, dict, float]]:
     """
     Processes a user query, performs a vector search across Person, Group, and Company,
     and prints the matching nodes with similarity scores greater than 0.8.
@@ -231,27 +238,35 @@ def search_nodes(user_query: str, top_k: int = 10) -> list[tuple[str, Node, floa
     query_embeddings = [embed_text(word).tolist() for word in words]
 
     # Define Cypher queries for each index
+
     cypher_queries = {
         'Person': """
             MATCH (n:Person)
             WHERE n.embedding IS NOT NULL
             CALL db.index.vector.queryNodes('person-embeddings', $top_k, $query_embedding) YIELD node, score
             WHERE score > 0.8
-            RETURN 'Person' AS type, node, score
+            RETURN 'Person' AS type, properties(node), score
         """,
         'Group': """
             MATCH (n:Group)
             WHERE n.embedding IS NOT NULL
             CALL db.index.vector.queryNodes('group-embeddings', $top_k, $query_embedding) YIELD node, score
             WHERE score > 0.8
-            RETURN 'Group' AS type, node, score
+            RETURN 'Group' AS type, properties(node), score
         """,
         'Company': """
             MATCH (n:Company)
             WHERE n.embedding IS NOT NULL
             CALL db.index.vector.queryNodes('company-embeddings', $top_k, $query_embedding) YIELD node, score
             WHERE score > 0.8
-            RETURN 'Company' AS type, node, score
+            RETURN 'Company' AS type, properties(node), score
+        """,
+        'HasCommitteeMember': """
+            MATCH () - [r:HAS_COMMITTEE_MEMBER] - ()
+            WHERE r.embedding IS NOT NULL
+            CALL db.index.vector.queryRelationships('has-committee-member-embeddings', $top_k, $query_embedding) YIELD relationship, score
+            WHERE score > 0.8
+            RETURN 'HasCommitteeMember' AS type, properties(relationship), score
         """
     }
 

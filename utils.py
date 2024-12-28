@@ -91,6 +91,11 @@ Relationships:
 """
     return schema.strip()
 
+def get_bi_der_relationships() -> str:
+    bider_rel = ["`IS_SPOUSE_OF`"]
+    return ", ".join(bider_rel)
+    
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.info)
     test_extract_cleaned_cypher()

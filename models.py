@@ -1,4 +1,4 @@
-from neomodel import StructuredNode, StringProperty, ArrayProperty, FloatProperty,UniqueIdProperty, RelationshipTo, RelationshipFrom
+from neomodel import StructuredNode, StringProperty, ArrayProperty, FloatProperty,UniqueIdProperty, RelationshipTo, RelationshipFrom, StructuredRel
 from typing import Optional, Callable
 from functools import wraps
 
@@ -14,7 +14,11 @@ class RELATIONSHIPS:
     IS_PARENT_OF = "IS_PARENT_OF"
     IS_PART_OF = "IS_PART_OF"
     IS_OWNER_OF = "IS_OWNER_OF"
+    HAS_COMMITTEE_MEMBER = "HAS_COMMITTEE_MEMBER"
 
+class HasCommitteMember(StructuredRel):
+    position = StringProperty()
+    
 
 class Model:
     def get_values(self) -> list[str]:
@@ -47,6 +51,23 @@ class Person(StructuredNode, Model):
                 'nick_name': self.nick_name,
                 "gender": self.gender
             }
+    
+class Society(StructuredNode, Model):
+    unique_id = UniqueIdProperty()
+    name = StringProperty(required=True)
+    # Relationships
+    committee_members = RelationshipTo('Person', RELATIONSHIPS.HAS_COMMITTEE_MEMBER, model=HasCommitteMember)
+    embedding = ArrayProperty(base_property=FloatProperty(default=None))
+
+    @filter_out_none_values
+    def get_values(self) -> list[str]:
+        return [self.name]
+
+    def get_node_info(self) -> dict:
+        return {
+            "unique_id": self.unique_id,
+            'name': self.name
+        }
 
 class Group(StructuredNode, Model):
     unique_id = UniqueIdProperty()

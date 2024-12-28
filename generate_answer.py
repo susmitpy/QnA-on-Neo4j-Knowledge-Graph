@@ -1,5 +1,5 @@
 from prompts import GET_FINAL_ANSWER
-from utils import get_schema_text, prepare_info_str
+from utils import get_schema_text, prepare_info_str, get_bi_der_relationships
 from llm import llm
 import logging
 
@@ -10,7 +10,8 @@ def generate_answer(user_query: str, info: list[tuple[str, dict]], cypher:str, c
         info=prepare_info_str(info=info),
         schema=get_schema_text(),
         cypher_query=cypher,
-        cypher_query_result=cypher_result
+        cypher_query_result=cypher_result,
+        bidir_rels=get_bi_der_relationships()
     )
 
     logging.info(prompt)
