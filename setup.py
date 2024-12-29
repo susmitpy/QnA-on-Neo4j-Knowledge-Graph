@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from models import Person, Group, Company, Model, HasCommitteMember
+from models import Person, Group, Company, Society, Model, HasCommitteMember
 from utils import execute_cypher_query
 from neo4j.graph import Node
 
@@ -30,6 +30,22 @@ def update_embeddings():
         """
         execute_cypher_query(query, {
             'elementId': person.element_id,
+            'embedding': embedding
+        })
+
+    # Update embeddings for Society
+    societies: list[Society] = Society.nodes.all()
+    for society in societies:
+        values = society.get_values()
+        text = prepare_values_for_embedding(values)
+        embedding = embed_text(text).tolist()
+        query = """
+        MATCH (a:Society)
+        WHERE elementId(a) = $elementId
+        CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
+        """
+        execute_cypher_query(query, {
+            'elementId': society.element_id,
             'embedding': embedding
         })
     
@@ -72,8 +88,9 @@ def update_embeddings():
     RETURN r    
     """
     )
-    for rel in has_committee_members_rels:
-        rel_model: HasCommitteMember = HasCommitteMember.inflate(rel)
+    for rel in has_committee_members_rels[0]:
+        logging.debug(rel)
+        rel_model: HasCommitteMember = HasCommitteMember.inflate(rel[0])
         values = rel_model.get_values()
         text = prepare_values_for_embedding(values)
         embedding = embed_text(text).tolist()
@@ -103,6 +120,12 @@ def create_index_on_unique_id():
     # Create index on unique_id for Company
     query = """
     CREATE INDEX FOR (n:Company) ON (n.unique_id)
+    """
+    execute_cypher_query(query)
+
+    # Create index on unique_id for Society
+    query = """
+    CREATE INDEX FOR (n:Society) ON (n.unique_id)
     """
     execute_cypher_query(query)
 
@@ -355,10 +378,10 @@ def search_nodes_rel(user_query: str, top_k: int = 10) -> list[tuple[str, Model,
     
     return combined_results
 
-def embed_all():
+def setup():
     update_embeddings()
     create_vector_index()
     create_index_on_unique_id()
 
 if __name__ == "__main__":
-    embed_all()
+    setup()

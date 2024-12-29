@@ -92,6 +92,9 @@ Relationships:
 - IS_PART_OF: Person -> Group
 - IS_OWNER_OF: Person -> Company
 - HAS_COMMITTEE_MEMBER (position: string): Society -> Person
+
+Indexes:
+  - unique_id: Person, Society, Group, Company, HAS_COMMITTEE_MEMBER
 """
     return schema.strip()
 

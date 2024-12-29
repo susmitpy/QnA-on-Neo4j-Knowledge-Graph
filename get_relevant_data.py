@@ -1,5 +1,5 @@
 import logging
-from embed import search_nodes_rel
+from setup import search_nodes_rel
 from models import Model, Person, Group, Company, Society, HasCommitteMember
 from neo4j.graph import Node
 
@@ -8,11 +8,12 @@ node_type_mapping = {
     "Group": Group,
     "Company": Company,
     "Society": Society,
-    "HAS_COMMITTEE_MEMBER": HasCommitteMember,
+    "HasCommitteeMember": HasCommitteMember,
 }
 
 #TODO: Handle both nodes and relationships
-def get_relevant_nodes(user_query: str) -> list[tuple[str, dict]]:
+#TODO: Handle multiple labels for a node
+def get_relevant_data(user_query: str) -> list[tuple[str, dict]]:
     """
     Returns the relevant nodes for the user query.
     """
@@ -29,6 +30,6 @@ def get_relevant_nodes(user_query: str) -> list[tuple[str, dict]]:
 
 user_query = "Which group is Jethalal's son a part of ?"
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.info)
-    nodes = get_relevant_nodes(user_query)
-    print(nodes)
+    logging.basicConfig(level=logging.INFO)
+    data = get_relevant_data(user_query)
+    print(data)

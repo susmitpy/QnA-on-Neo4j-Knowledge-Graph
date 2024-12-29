@@ -22,7 +22,7 @@ def generate_cypher(user_query: str, info: list[tuple[str, dict]]):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.info)
+    logging.basicConfig(level=logging.INFO)
     user_query = "Which group is Jethalal's son a part of ?"
     relevant_nodes = [('Person', {'unique_id': '8f5ab237d5ff4b34a0409dd6c0dd0f6d', 'first_name': 'Jethalal', 'surname': 'Gada', 'nick_name': 'Jethia', 'gender': 'M'})]
     cypher = generate_cypher(user_query=user_query, info=relevant_nodes)
