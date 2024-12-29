@@ -1,5 +1,5 @@
 from neomodel import StructuredNode, StringProperty, ArrayProperty, FloatProperty,UniqueIdProperty, RelationshipTo, RelationshipFrom, StructuredRel
-from typing import Optional, Callable
+from typing import Callable
 from functools import wraps
 
 def filter_out_none_values(func: Callable) -> Callable:
@@ -16,20 +16,28 @@ class RELATIONSHIPS:
     IS_OWNER_OF = "IS_OWNER_OF"
     HAS_COMMITTEE_MEMBER = "HAS_COMMITTEE_MEMBER"
 
+class INDEXES:
+    PERSON_EMBEDDING = "person-embedding"
+    GROUP_EMBEDDING = "group-embedding"
+    COMPANY_EMBEDDING = "company-embedding"
+    SOCIETY_EMBEDDING = "society-embedding"
+    HAS_COMMITTEE_MEMBER_EMBEDDING = "has_committee_member-embedding"
+
 class Model:
-    def get_values(self) -> list[str]:
+    def get_values_for_embedding(self) -> list[str]:
         raise NotImplementedError
 
     def get_model_info(self) -> dict:
         raise NotImplementedError
 
 
-class HasCommitteMember(StructuredRel, Model):
+class HasCommitteeMember(StructuredRel, Model):
     unique_id = UniqueIdProperty()
     position = StringProperty()
+    embedding = ArrayProperty(base_property=FloatProperty(default=None))
 
     @filter_out_none_values
-    def get_values(self) -> list[str]:
+    def get_values_for_embedding(self) -> list[str]:
         return [self.position]
     
     def get_model_info(self) -> dict:
@@ -52,8 +60,8 @@ class Person(StructuredNode, Model):
     groups = RelationshipTo('Group', RELATIONSHIPS.IS_PART_OF)
 
     @filter_out_none_values
-    def get_values(self) -> list[str]:
-        return [self.first_name, self.surname, self.nick_name, self.gender]
+    def get_values_for_embedding(self) -> list[str]:
+        return [self.first_name, self.surname, self.nick_name]
     
     def get_model_info(self) -> dict:
         return {
@@ -68,11 +76,11 @@ class Society(StructuredNode, Model):
     unique_id = UniqueIdProperty()
     name = StringProperty(required=True)
     # Relationships
-    committee_members = RelationshipTo('Person', RELATIONSHIPS.HAS_COMMITTEE_MEMBER, model=HasCommitteMember)
+    committee_members = RelationshipTo('Person', RELATIONSHIPS.HAS_COMMITTEE_MEMBER, model=HasCommitteeMember)
     embedding = ArrayProperty(base_property=FloatProperty(default=None))
 
     @filter_out_none_values
-    def get_values(self) -> list[str]:
+    def get_values_for_embedding(self) -> list[str]:
         return [self.name]
 
     def get_model_info(self) -> dict:
@@ -89,7 +97,7 @@ class Group(StructuredNode, Model):
     embedding = ArrayProperty(base_property=FloatProperty(default=None))
 
     @filter_out_none_values
-    def get_values(self) -> list[str]:
+    def get_values_for_embedding(self) -> list[str]:
         return [self.name]
 
     def get_model_info(self) -> dict:
@@ -106,7 +114,7 @@ class Company(StructuredNode, Model):
     embedding = ArrayProperty(base_property=FloatProperty(default=None))
 
     @filter_out_none_values
-    def get_values(self) -> list[str]:
+    def get_values_for_embedding(self) -> list[str]:
         return [self.name]
     
     def get_model_info(self) -> dict:

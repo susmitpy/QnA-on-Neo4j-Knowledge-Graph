@@ -7,20 +7,23 @@ from generate_answer import generate_answer
 import logging
 logging.basicConfig(level=logging.ERROR)
 
-logging.info("Welcome to TMKOC QnA")
-logging.info("To quit, press q")
+print("Welcome to TMKOC QnA")
+print("To quit, press q")
  
 while True:
-    user_query = input("Enter your query: ")
+    user_query = input("\nEnter your query: ")
     if user_query == "q":
         print("Bye !")
         exit()
+    
+    try:
+        relevant_nodes = get_relevant_data(user_query=user_query)
+        cypher_to_fetch_additional_info = generate_cypher(user_query=user_query, info=relevant_nodes)
+        cypher_result = execute_cypher(cypher=cypher_to_fetch_additional_info)
+        final_answer = generate_answer(user_query=user_query, info=relevant_nodes, cypher=cypher_to_fetch_additional_info, cypher_result=cypher_result)
 
-    relevant_nodes = get_relevant_data(user_query=user_query)
-    cypher_to_fetch_additional_info = generate_cypher(user_query=user_query, info=relevant_nodes)
-    cypher_result = execute_cypher(cypher=cypher_to_fetch_additional_info)
-    final_answer = generate_answer(user_query=user_query, info=relevant_nodes, cypher=cypher_to_fetch_additional_info, cypher_result=cypher_result)
-
-    print(final_answer)
+        print(final_answer)
+    except Exception as e:
+        logging.error(e)
 
     

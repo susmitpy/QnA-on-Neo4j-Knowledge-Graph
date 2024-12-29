@@ -1,5 +1,5 @@
-from models import Person, Group, Company, Society
-from neomodel import config, RelationshipTo
+from models import Person, Group, Company, Society, HasCommitteeMember
+from neomodel import config
 
 # Configure the connection to Neo4j
 config.DATABASE_URL = 'bolt://neo4j:neotest123@localhost:7687'
@@ -55,6 +55,7 @@ def create_nodes():
     popatlal: Person = Person(first_name="Popatlal", surname="Pandey", gender="M").save()
     pankaj: Person = Person(first_name="Pankaj",nick_name="Pinku",surname="Sahay", gender="M").save()
 
+    
     tipendra.groups.connect(tapu_sena)
     gulabkumar.groups.connect(tapu_sena)
     sonalika.groups.connect(tapu_sena)
@@ -77,9 +78,9 @@ def create_nodes():
     babita.groups.connect(mahila_mandal)
 
     gokuldham: Society = Society(name="Gokuldham Society, Pavdar Galli, Goregaon East").save()
-    gokuldham.committee_members.connect(aatmaram, {"position": "Secretary"})
-    gokuldham.committee_members.connect(krishnan, {"position": "Treasurer"})
-    gokuldham.committee_members.connect(popatlal, {"position": "Member"})
+    gokuldham.committee_members.connect(aatmaram, {HasCommitteeMember.position.name: "Secretary"})
+    gokuldham.committee_members.connect(krishnan, {HasCommitteeMember.position.name: "Treasurer"})
+    gokuldham.committee_members.connect(popatlal, {HasCommitteeMember.position.name: "Member"})
 
 
 if __name__ == "__main__":
