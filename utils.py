@@ -76,6 +76,9 @@ Nodes:
   - surname
   - nick_name
   - gender (M,F)
+- Society
+  - unique_id
+  - name
 - Group
   - unique_id
   - name
@@ -88,6 +91,7 @@ Relationships:
 - IS_PARENT_OF: Person -> Person
 - IS_PART_OF: Person -> Group
 - IS_OWNER_OF: Person -> Company
+- HAS_COMMITTEE_MEMBER (position: string): Society -> Person
 """
     return schema.strip()
 

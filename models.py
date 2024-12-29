@@ -16,16 +16,28 @@ class RELATIONSHIPS:
     IS_OWNER_OF = "IS_OWNER_OF"
     HAS_COMMITTEE_MEMBER = "HAS_COMMITTEE_MEMBER"
 
-class HasCommitteMember(StructuredRel):
-    position = StringProperty()
-    
-
 class Model:
     def get_values(self) -> list[str]:
         raise NotImplementedError
 
-    def get_node_info(self) -> dict:
+    def get_model_info(self) -> dict:
         raise NotImplementedError
+
+
+class HasCommitteMember(StructuredRel, Model):
+    unique_id = UniqueIdProperty()
+    position = StringProperty()
+
+    @filter_out_none_values
+    def get_values(self) -> list[str]:
+        return [self.position]
+    
+    def get_model_info(self) -> dict:
+        return {
+            "unique_id": self.unique_id,
+            'position': self.position
+        }
+
 
 class Person(StructuredNode, Model):
     unique_id = UniqueIdProperty() #TODO: Replace this with custom property that uses ULID
@@ -43,7 +55,7 @@ class Person(StructuredNode, Model):
     def get_values(self) -> list[str]:
         return [self.first_name, self.surname, self.nick_name, self.gender]
     
-    def get_node_info(self) -> dict:
+    def get_model_info(self) -> dict:
         return {
                 "unique_id": self.unique_id,
                 'first_name': self.first_name,
@@ -63,7 +75,7 @@ class Society(StructuredNode, Model):
     def get_values(self) -> list[str]:
         return [self.name]
 
-    def get_node_info(self) -> dict:
+    def get_model_info(self) -> dict:
         return {
             "unique_id": self.unique_id,
             'name': self.name
@@ -80,7 +92,7 @@ class Group(StructuredNode, Model):
     def get_values(self) -> list[str]:
         return [self.name]
 
-    def get_node_info(self) -> dict:
+    def get_model_info(self) -> dict:
         return {
             "unique_id": self.unique_id,
             'name': self.name
@@ -97,7 +109,7 @@ class Company(StructuredNode, Model):
     def get_values(self) -> list[str]:
         return [self.name]
     
-    def get_node_info(self) -> dict:
+    def get_model_info(self) -> dict:
         return {
             "unique_id": self.unique_id,
             'name': self.name

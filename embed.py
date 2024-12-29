@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from models import Person, Group, Company
+from models import Person, Group, Company, Model, HasCommitteMember
 from utils import execute_cypher_query
 from neo4j.graph import Node
 
@@ -24,11 +24,12 @@ def update_embeddings():
         text = prepare_values_for_embedding(values)
         embedding = embed_text(text).tolist()
         query = """
-        MATCH (a:Person {first_name: $first_name})
+        MATCH (a:Person)
+        WHERE elementId(a) = $elementId
         CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
         """
         execute_cypher_query(query, {
-            'first_name': person.first_name,
+            'elementId': person.element_id,
             'embedding': embedding
         })
     
@@ -39,11 +40,12 @@ def update_embeddings():
         text = prepare_values_for_embedding(values)
         embedding = embed_text(text).tolist()
         query = """
-        MATCH (a:Group {name: $name})
+        MATCH (a:Group)
+        WHERE elementId(a) = $elementId
         CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
         """
         execute_cypher_query(query, {
-            'name': group.name,
+            'elementId': group.element_id,
             'embedding': embedding
         })
     
@@ -54,13 +56,62 @@ def update_embeddings():
         text = prepare_values_for_embedding(values)
         embedding = embed_text(text).tolist()
         query = """
-        MATCH (a:Company {name: $name})
+        MATCH (a:Company)
+        WHERE elementId(a) = $elementId
         CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
         """
         execute_cypher_query(query, {
-            'name': company.name,
+            'elementId': company.element_id,
             'embedding': embedding
         })
+
+    # Update embeddings for HasCommitteeMember relationship
+    has_committee_members_rels = execute_cypher_query(
+    """
+    MATCH (:Society) - [r:HAS_COMMITTEE_MEMBER] - (:Person)
+    RETURN r    
+    """
+    )
+    for rel in has_committee_members_rels:
+        rel_model: HasCommitteMember = HasCommitteMember.inflate(rel)
+        values = rel_model.get_values()
+        text = prepare_values_for_embedding(values)
+        embedding = embed_text(text).tolist()
+        query = """
+        MATCH () - [r:HAS_COMMITTEE_MEMBER] - ()
+        WHERE elementId(r) = $elementId
+        CALL db.create.setRelationshipVectorProperty(r, 'embedding', $embedding);
+        """
+        execute_cypher_query(query, {
+            'elementId': rel_model.element_id,
+            'embedding': embedding
+        })
+
+def create_index_on_unique_id():
+    # Create index on unique_id for Person
+    query = """
+    CREATE INDEX FOR (n:Person) ON (n.unique_id)
+    """
+    execute_cypher_query(query)
+
+    # Create index on unique_id for Group
+    query = """
+    CREATE INDEX FOR (n:Group) ON (n.unique_id)
+    """
+    execute_cypher_query(query)
+
+    # Create index on unique_id for Company
+    query = """
+    CREATE INDEX FOR (n:Company) ON (n.unique_id)
+    """
+    execute_cypher_query(query)
+
+    # Create index on unique_id for HasCommitteeMember relationship
+    query = """
+    CREATE INDEX FOR () - [r:HAS_COMMITTEE_MEMBER] - () ON (r.unique_id)
+    """
+    execute_cypher_query(query)
+
 
 def create_vector_index():
     # Create vector index for Person
@@ -219,9 +270,10 @@ STOP_WORDS = {'i',
  'should',
  'now'}
 
-def search_nodes(user_query: str, top_k: int = 10) -> list[tuple[str, dict, float]]:
+def search_nodes_rel(user_query: str, top_k: int = 10) -> list[tuple[str, Model, float]]:
     """
-    Processes a user query, performs a vector search across Person, Group, and Company,
+    Processes a user query, performs a vector search across Person, Group, and Company.
+    Relationships HAS_COMMITTEE_MEMBER is also considered.
     and prints the matching nodes with similarity scores greater than 0.8.
     
     Args:
@@ -245,28 +297,28 @@ def search_nodes(user_query: str, top_k: int = 10) -> list[tuple[str, dict, floa
             WHERE n.embedding IS NOT NULL
             CALL db.index.vector.queryNodes('person-embeddings', $top_k, $query_embedding) YIELD node, score
             WHERE score > 0.8
-            RETURN 'Person' AS type, properties(node), score
+            RETURN 'Person' AS type, node, score
         """,
         'Group': """
             MATCH (n:Group)
             WHERE n.embedding IS NOT NULL
             CALL db.index.vector.queryNodes('group-embeddings', $top_k, $query_embedding) YIELD node, score
             WHERE score > 0.8
-            RETURN 'Group' AS type, properties(node), score
+            RETURN 'Group' AS type, node, score
         """,
         'Company': """
             MATCH (n:Company)
             WHERE n.embedding IS NOT NULL
             CALL db.index.vector.queryNodes('company-embeddings', $top_k, $query_embedding) YIELD node, score
             WHERE score > 0.8
-            RETURN 'Company' AS type, properties(node), score
+            RETURN 'Company' AS type, node, score
         """,
         'HasCommitteeMember': """
             MATCH () - [r:HAS_COMMITTEE_MEMBER] - ()
             WHERE r.embedding IS NOT NULL
             CALL db.index.vector.queryRelationships('has-committee-member-embeddings', $top_k, $query_embedding) YIELD relationship, score
             WHERE score > 0.8
-            RETURN 'HasCommitteeMember' AS type, properties(relationship), score
+            RETURN 'HasCommitteeMember' AS type, relationship, score
         """
     }
 
@@ -306,6 +358,7 @@ def search_nodes(user_query: str, top_k: int = 10) -> list[tuple[str, dict, floa
 def embed_all():
     update_embeddings()
     create_vector_index()
+    create_index_on_unique_id()
 
 if __name__ == "__main__":
     embed_all()
