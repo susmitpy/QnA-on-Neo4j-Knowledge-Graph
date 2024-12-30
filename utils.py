@@ -45,11 +45,10 @@ def test_extract_cleaned_cypher():
     content="```\nMATCH (jethalal:Person{unique_id:'8f5ab237d5ff4b34a0409dd6c0dd0f6d'}) \nOPTIONAL MATCH (jethalal)-[parent:IS_PARENT_OF]->(child:Person)\nRETURN child-->(group:Group)<-[part_of:IS_PART_OF] WHERE part_of IS NOT NULL\n```"
     print(extract_cleaned_cypher(content))
 
-def prepare_info_str(info: list[tuple[str, dict]]) -> str:
+def prepare_info_str(info: list[tuple[set, dict]]) -> str:
     info_str = ""
-    #TODO: Keep only node info data, support multiple labels
-    for label, data in info:
-        info_str += f"\nLabel: {label}"
+    for labels, data in info:
+        info_str += f"\nLabel: {labels}"
         info_str += f"\nInfo: {data}"
     
     return info_str

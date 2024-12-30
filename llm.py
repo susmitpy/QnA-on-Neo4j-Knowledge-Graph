@@ -1,6 +1,6 @@
 from langchain_community.chat_models.ollama import ChatOllama
 
-LOCAL = True
+LOCAL = False
 
 if LOCAL:
     model_params = {

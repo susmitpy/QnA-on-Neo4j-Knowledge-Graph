@@ -18,11 +18,10 @@ def embed_text(text) -> np.ndarray[float]:
     return model.encode(text)
 
 
-def search_nodes_rel(user_query: str, top_k: int = 5, score_thresh=0.5) -> list[tuple[str, Model, float]]:
+def search_nodes_rel(user_query: str, top_k: int = 10, score_thresh=0.5) -> list[tuple[str, Model, float]]:
     """
     Processes a user query, performs a vector search across Person, Group, and Company.
     Relationships HAS_COMMITTEE_MEMBER is also considered.
-    and prints the matching nodes with similarity scores greater than 0.8.
     
     Args:
         user_query (str): The user's search query.
@@ -51,7 +50,6 @@ def search_nodes_rel(user_query: str, top_k: int = 5, score_thresh=0.5) -> list[
             CALL db.index.vector.queryNodes('{INDEXES.PERSON_EMBEDDING}', $top_k, $query_embedding) YIELD node, score
             WHERE score > $score_thresh
             RETURN 'Person' AS type, node, score
-            ORDER BY score DESC
         """,
         'Group': f"""
             MATCH (n:Group)

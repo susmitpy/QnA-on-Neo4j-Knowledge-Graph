@@ -5,7 +5,7 @@ from execute_cypher import execute_cypher
 from generate_answer import generate_answer
 
 import logging
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.WARNING)
 
 print("Welcome to TMKOC QnA")
 print("To quit, press q")

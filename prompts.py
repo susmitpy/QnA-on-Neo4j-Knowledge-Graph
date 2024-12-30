@@ -37,7 +37,7 @@ The query returned:
 
 Answer the user's query:
 
-- Provide a concise, human-friendly response based only on the query result.
+- Provide a concise, human-friendly response based only on the above information.
 - For relationships like {bidir_rels}, which are inherently bidirectional, ensure you use the data as undirected and account for both directions in the context of the result.
 - Base your answer strictly on the provided schema, query result, and context. Avoid adding assumptions or external information.
 """

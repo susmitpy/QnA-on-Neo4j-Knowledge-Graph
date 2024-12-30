@@ -2,6 +2,8 @@ from neomodel import StructuredNode, StringProperty, ArrayProperty, FloatPropert
 from typing import Callable
 from functools import wraps
 
+
+
 def filter_out_none_values(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -123,3 +125,11 @@ class Company(StructuredNode, Model):
             'name': self.name
         }
 
+
+node_rel_type_mapping = {
+    "Person": Person,
+    "Group": Group,
+    "Company": Company,
+    "Society": Society,
+    "HasCommitteeMember": HasCommitteeMember,
+}

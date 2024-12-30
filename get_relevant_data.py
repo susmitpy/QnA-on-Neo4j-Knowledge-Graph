@@ -1,35 +1,38 @@
 import logging
 from vector_utils import search_nodes_rel
-from models import Model, Person, Group, Company, Society, HasCommitteeMember
-from neo4j.graph import Node
+from models import Model, node_rel_type_mapping
+from neo4j.graph import Node, Relationship
 from sys import exit
 
-node_type_mapping = {
-    "Person": Person,
-    "Group": Group,
-    "Company": Company,
-    "Society": Society,
-    "HasCommitteeMember": HasCommitteeMember,
-}
+def get_relevant_data(user_query: str, top_k:int=5) -> list[tuple[set, dict]]:
+    """
+    Returns the relevant nodes, relationships for the user query.
 
-#TODO: Handle both nodes and relationships
-#TODO: Handle multiple labels for a node
-def get_relevant_data(user_query: str) -> list[tuple[str, dict]]:
+    Returns:
+    list[tuple[set, dict]]: A list of tuples containing the labels and the data info.
     """
-    Returns the relevant nodes for the user query.
-    """
-    nodes: list[tuple[str,Node,float]] = search_nodes_rel(user_query)
-    # Sort the data by score, the filter in query will work only for each separate entity
-    sorted_nodes = sorted(nodes, key=lambda x: x[2], reverse=True)
+    nodes_rel: list[tuple[str,Node,float]] = search_nodes_rel(user_query)
+    # Sort the data by score, the sort in query will work only for each separate entity
+    sorted_nodes_rels = sorted(nodes_rel, key=lambda x: x[2], reverse=True)
+    top_k_sorted_nodes_rels = sorted_nodes_rels[:top_k]
 
     result = []
-    for node_type, node, score in sorted_nodes:
-        node_obj:Model = node_type_mapping[node_type].inflate(node)
-        node_info = node_obj.get_model_info()
-        result.append((node_type, node_info))
-        logging.info(node_type)
-        logging.info(node_info)
+    for entity, node_rel, score in top_k_sorted_nodes_rels:
+        data_obj:Model = node_rel_type_mapping[entity].inflate(node_rel)
+        data_info = data_obj.get_model_info()
+        labels_type: str
+        if isinstance(node_rel, Node):
+            labels_type = str(list(node_rel.labels))
+        elif isinstance(node_rel, Relationship):
+            node_rel: Relationship
+            labels_type = node_rel.type
+        result.append((labels_type, data_info))
+        logging.info(entity)
+        logging.info(labels_type)
+        logging.info(data_info)
         logging.info(score)
+
+    logging.info(result)
 
     return result
 
