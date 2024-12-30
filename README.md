@@ -62,7 +62,7 @@ A:
 In the popular Indian sitcom Taarak Mehta Ka Ooltah Chashmah (TMKOC), Bhidé's wife is often referred to as "Babita".
 ```
 
-`llama 3.3 70B` answers the above two questions incorrectly.
+`llama 3.3 70B` answers the above two questions incorrectly by itself.
 Apart from the above two questions, `llama 3.3 70B` is able to answer the rest of the questions without the need for RAG. This must be due to the training data of the model on the publicly available data.
 
 # Knowledge Graph
