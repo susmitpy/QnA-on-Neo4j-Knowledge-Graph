@@ -33,13 +33,12 @@ def execute_cypher(cypher:str):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     user_query = "Which group is Jethalal's son a part of ?"
-    relevant_nodes = [("['Person']", {'unique_id': '71ab9b9354224045962ba3606e452729', 'first_name': 'Jethalal', 'surname': 'Gada', 'nick_name': 'Jethia', 'gender': 'M'}), ('HAS_COMMITTEE_MEMBER', {'unique_id': 'a9a73ec269664b59b4095a1cdc591ca5', 'position': 'Member'}), ("['Group']", {'unique_id': '46cc614dbc9c46978f504adc1dedd584', 'name': 'Mahila Mandal'}), ("['Person']", {'unique_id': '27f54f7cbba2475abc68dad230d91295', 'first_name': 'Sonalika', 'surname': 'Bhide', 'nick_name': 'Sonu', 'gender': 'F'}), ("['Person']", {'unique_id': 'b7ae43fa45f94f6090c2e8cab9d3344b', 'first_name': 'Gulabkumar', 'surname': 'Haathi', 'nick_name': 'Goli', 'gender': 'M'})]
+    relevant_data = [("['Person']", {'unique_id': '68caf0e03eb74f3b959ddb5f13811695', 'first_name': 'Jethalal', 'surname': 'Gada', 'nick_name': 'Jethia', 'gender': 'M'}), ('HAS_COMMITTEE_MEMBER', {'unique_id': '6ebcc32e8daf4988973fda14d4dd8109', 'position': 'Member'}), ("['Group']", {'unique_id': '8c7103cf3db94c9fba3a0a7dcebc3758', 'name': 'Mahila Mandal'}), ("['Person']", {'unique_id': 'dee49592d0dd47b3b71a16f8b3d2cc9b', 'first_name': 'Sonalika', 'surname': 'Bhide', 'nick_name': 'Sonu', 'gender': 'F'}), ("['Person']", {'unique_id': '31d5992f8ff74bdfb70374b3d8c949a1', 'first_name': 'Gulabkumar', 'surname': 'Haathi', 'nick_name': 'Goli', 'gender': 'M'})]
     cypher="""
-    MATCH (p:Person)-[:IS_PARENT_OF]->(c:Person)
-WHERE p.unique_id = '71ab9b9354224045962ba3606e452729'
-WITH c
-OPTIONAL MATCH (c)-[:IS_PART_OF]->(g:Group)
-RETURN g.name AS group_name
+MATCH (p1:Person {first_name: 'Jethalal', surname: 'Gada'})
+      -[:IS_PARENT_OF*1]-(p2:Person)
+      -[:IS_PART_OF]-(g:Group)
+RETURN g.name
 """
     resp = execute_cypher(cypher=cypher)
     logging.info(resp)
