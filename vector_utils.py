@@ -7,7 +7,6 @@ import numpy as np
 
 import logging
 
-#TODO: use a better embedder which is apt for values or maybe key value pairs and/or find better strategy
 # Load the model
 model = SentenceTransformer('all-MiniLM-L6-v2')
 

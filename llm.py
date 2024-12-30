@@ -1,5 +1,7 @@
 from langchain_community.chat_models.ollama import ChatOllama
 
+#TODO: Inject the model, local, azure inference etc
+
 LOCAL = False
 
 if LOCAL:
