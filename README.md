@@ -99,7 +99,7 @@ As per the docker-compose file, the username and password are `neo4j` and `neote
 Run `python create_kg.py` to create a knowledge graph in Neo4j.
 
 2. Setup embeddings, vector indexes, and unique_id indexes  
-Run `python setup.py` to
+Run `python setup_embeddings_and_indexes.py` to
     * Generate embeddings for nodes and relationships properties data
     * Update the nodes, relationships with embeddings
     * Create vector indexes
@@ -121,7 +121,7 @@ Run `python app.py` to run the application.
 `create_kg.py`
 Create a knowledge graph in Neo4j.
 
-`setup.py`
+`setup_embeddings_and_indexes.py`
 Generate embeddings for nodes and relationships properties data, update the nodes, relationships with embeddings, create vector indexes, create index on unique_id property of nodes and relationships.
 
 `models.py`
