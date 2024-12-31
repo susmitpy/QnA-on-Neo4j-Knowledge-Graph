@@ -8,6 +8,9 @@ Given a user query,
 3. Execute cypher query
 4. Generate final answer
 
+# Knowledge Graph
+![Knowledge Graph](./public/kg.png)
+
 # Demo
 ### LLama 3.3 70B with RAG 
 ```
@@ -64,9 +67,6 @@ In the popular Indian sitcom Taarak Mehta Ka Ooltah Chashmah (TMKOC), Bhidé's w
 
 `llama 3.3 70B` answers the above two questions incorrectly by itself.
 Apart from the above two questions, `llama 3.3 70B` is able to answer the rest of the questions without the need for RAG. This must be due to the training data of the model on the publicly available data.
-
-# Knowledge Graph
-![Knowledge Graph](./public/kg.png)
 
 # Env Setup
 
