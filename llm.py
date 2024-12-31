@@ -1,60 +1,17 @@
-from langchain_community.chat_models.ollama import ChatOllama
+from typing import Type
 
-#TODO: Inject the model, local, azure inference etc
+from llms.azure_ai_inference import AzureAIInferenceLLM
+from llms.base import LLM
+from llms.ollama import OllamaLLM
 
-LOCAL = False
+llms_with_params: list[tuple[Type[LLM], dict]] = [
+    (OllamaLLM, {}),
+    (AzureAIInferenceLLM, {"model": "llama3.3 70"}),
+    (AzureAIInferenceLLM, {"model": "llama3.1 8"}),
+]
 
-if LOCAL:
-    model_params = {
-        "temperature": 0.2,
-        "top_p": 0.9,
-        "max_gen_len": 2048,
-    }
+llm_index_to_use = 0
 
-    llm = ChatOllama(model="llama3.1", temperature=model_params["temperature"], top_p=model_params["top_p"])
-    # llm.invoke() -> response 
-    # text -> response.content 
-else:
-    from azure.ai.inference import ChatCompletionsClient
-    from azure.ai.inference.models import SystemMessage
-    from azure.ai.inference.models import UserMessage
-    from azure.core.credentials import AzureKeyCredential
-    import configparser
-    config = configparser.ConfigParser()
-    config.read("env.ini")
-    GITHUB_API_KEY = config["DEFAULT"]["GITHUB_TOKEN"]
+llm_with_param = llms_with_params[llm_index_to_use]
 
-    client = ChatCompletionsClient(
-        endpoint="https://models.inference.ai.azure.com",
-        credential=AzureKeyCredential(GITHUB_API_KEY),
-    )
-
-    model_params = {
-        "temperature": 0.2,
-        "top_p": 0.9,
-        "max_gen_len": 2048,
-    }
-
-    model_dict = {
-        "llama3.3 70": "Llama-3.3-70B-Instruct",
-        "llama3.1 8": "Meta-Llama-3.1-8B-Instruct"
-    }
-
-    class LLM:
-        def invoke(self, prompt: str):
-            response = client.complete(
-                messages=[
-                    SystemMessage(content=""""""),
-                    UserMessage(content=prompt),
-                ],
-                model=model_dict["llama3.3 70"],
-                temperature=model_params["temperature"],
-                max_tokens=model_params["max_gen_len"],
-                top_p=model_params["top_p"],
-            )
-
-            return response.choices[0].message
-            # response.choices[0].message.content has text
-
-            
-    llm = LLM()
+llm = llm_with_param[0](**llm_with_param[1])

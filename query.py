@@ -1,14 +1,15 @@
-from neomodel import db
-from neomodel import config
+from neomodel import config, db
 
 # Configure the connection to Neo4j
-config.DATABASE_URL = 'bolt://neo4j:neotest123@localhost:7687'
+config.DATABASE_URL = "bolt://neo4j:neotest123@localhost:7687"
+
 
 def execute_cypher_query(query, params=None):
     """
     Executes a Cypher query and returns the result.
     """
     return db.cypher_query(query, params)
+
 
 def get_schema_text():
     """

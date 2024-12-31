@@ -1,10 +1,11 @@
 import logging
 import re
-from neomodel import db
-from neomodel import config
+
+from neomodel import config, db
 
 # Configure the connection to Neo4j
-config.DATABASE_URL = 'bolt://neo4j:neotest123@localhost:7687'
+config.DATABASE_URL = "bolt://neo4j:neotest123@localhost:7687"
+
 
 def extract_cleaned_cypher(resp_content: str) -> str:
     """
@@ -25,11 +26,12 @@ def extract_cleaned_cypher(resp_content: str) -> str:
 
     # Attempt to extract Cypher queries from the response content using regular expressions
     cypher_queries = [
-        re.search(r"```cypher\n(.*?)\n```", resp_content, re.DOTALL),  # multi-line syntax
+        re.search(
+            r"```cypher\n(.*?)\n```", resp_content, re.DOTALL
+        ),  # multi-line syntax
         re.search(r"```sql\n(.*?)\n```", resp_content, re.DOTALL),  # multi-line syntax
         re.search(r"```(.*?)\n```", resp_content, re.DOTALL),  # multi-line syntax
-        re.search(r"(?:\\n|^)(?:(?:MATCH) )?\((.*?)\)", resp_content,
-re.DOTALL),
+        re.search(r"(?:\\n|^)(?:(?:MATCH) )?\((.*?)\)", resp_content, re.DOTALL),
     ]
 
     # Find the first matching Cypher query (if any) and return it
@@ -41,17 +43,20 @@ re.DOTALL),
     # If no Cypher queries are found, raise an exception
     raise Exception("Cypher Query Not Found")
 
+
 def test_extract_cleaned_cypher():
-    content="```\nMATCH (jethalal:Person{unique_id:'8f5ab237d5ff4b34a0409dd6c0dd0f6d'}) \nOPTIONAL MATCH (jethalal)-[parent:IS_PARENT_OF]->(child:Person)\nRETURN child-->(group:Group)<-[part_of:IS_PART_OF] WHERE part_of IS NOT NULL\n```"
+    content = "```\nMATCH (jethalal:Person{unique_id:'8f5ab237d5ff4b34a0409dd6c0dd0f6d'}) \nOPTIONAL MATCH (jethalal)-[parent:IS_PARENT_OF]->(child:Person)\nRETURN child-->(group:Group)<-[part_of:IS_PART_OF] WHERE part_of IS NOT NULL\n```"
     print(extract_cleaned_cypher(content))
+
 
 def prepare_info_str(info: list[tuple[set, dict]]) -> str:
     info_str = ""
     for labels, data in info:
         info_str += f"\nLabel: {labels}"
         info_str += f"\nInfo: {data}"
-    
+
     return info_str
+
 
 def execute_cypher_query(query, params=None):
     """
@@ -62,6 +67,7 @@ def execute_cypher_query(query, params=None):
     except Exception:
         logging.error(query)
         raise
+
 
 def get_schema_text():
     """
@@ -97,10 +103,11 @@ Indexes:
 """
     return schema.strip()
 
+
 def get_bi_der_relationships() -> str:
     bider_rel = ["`IS_SPOUSE_OF`"]
     return ", ".join(bider_rel)
-    
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.info)

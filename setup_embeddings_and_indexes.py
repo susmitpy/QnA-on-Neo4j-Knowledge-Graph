@@ -1,6 +1,7 @@
-from models import Person, Group, Company, Society, HasCommitteeMember, INDEXES
+from models import INDEXES, Company, Group, HasCommitteeMember, Person, Society
 from utils import execute_cypher_query
-from vector_utils import prepare_values_for_embedding, embed_text
+from vector_utils import embed_text, prepare_values_for_embedding
+
 
 def update_embeddings():
     # Update embeddings for Person
@@ -14,10 +15,9 @@ def update_embeddings():
         WHERE elementId(a) = $elementId
         CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
         """
-        execute_cypher_query(query, {
-            'elementId': person.element_id,
-            'embedding': embedding
-        })
+        execute_cypher_query(
+            query, {"elementId": person.element_id, "embedding": embedding}
+        )
 
     # Update embeddings for Society
     societies: list[Society] = Society.nodes.all()
@@ -30,11 +30,10 @@ def update_embeddings():
         WHERE elementId(a) = $elementId
         CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
         """
-        execute_cypher_query(query, {
-            'elementId': society.element_id,
-            'embedding': embedding
-        })
-    
+        execute_cypher_query(
+            query, {"elementId": society.element_id, "embedding": embedding}
+        )
+
     # Update embeddings for Group
     groups: list[Group] = Group.nodes.all()
     for group in groups:
@@ -46,11 +45,10 @@ def update_embeddings():
         WHERE elementId(a) = $elementId
         CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
         """
-        execute_cypher_query(query, {
-            'elementId': group.element_id,
-            'embedding': embedding
-        })
-    
+        execute_cypher_query(
+            query, {"elementId": group.element_id, "embedding": embedding}
+        )
+
     # Update embeddings for Company
     companies: list[Company] = Company.nodes.all()
     for company in companies:
@@ -62,14 +60,13 @@ def update_embeddings():
         WHERE elementId(a) = $elementId
         CALL db.create.setNodeVectorProperty(a, 'embedding', $embedding);
         """
-        execute_cypher_query(query, {
-            'elementId': company.element_id,
-            'embedding': embedding
-    })
+        execute_cypher_query(
+            query, {"elementId": company.element_id, "embedding": embedding}
+        )
 
     # Update embeddings for HasCommitteeMember relationship
     has_committee_members_rels = execute_cypher_query(
-    """
+        """
     MATCH (:Society) - [r:HAS_COMMITTEE_MEMBER] - (:Person)
     RETURN r    
     """
@@ -84,10 +81,10 @@ def update_embeddings():
         WHERE elementId(r) = $elementId
         CALL db.create.setRelationshipVectorProperty(r, 'embedding', $embedding);
         """
-        execute_cypher_query(query, {
-            'elementId': rel_model.element_id,
-            'embedding': embedding
-        })
+        execute_cypher_query(
+            query, {"elementId": rel_model.element_id, "embedding": embedding}
+        )
+
 
 def create_index_on_unique_id():
     # Create index on unique_id for Person
@@ -157,10 +154,12 @@ def create_vector_index():
     """
     execute_cypher_query(query)
 
+
 def setup():
     update_embeddings()
     create_vector_index()
     create_index_on_unique_id()
+
 
 if __name__ == "__main__":
     setup()

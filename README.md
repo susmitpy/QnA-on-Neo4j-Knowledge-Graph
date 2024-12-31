@@ -108,7 +108,7 @@ Run `python setup_embeddings_and_indexes.py` to
 3. LLM Setup  
 Either use ollama locally or use github models. The llm configuration is present in `llm.py`.   
     To use github models,
-    * Set `LOCAL=False` in `llm.py`
+    * Update `llm_index_to_use` in `llm.py` 
     * Duplicate the `sample_env.ini` file and rename it to `env.ini`
     * Add the github token in the `env.ini` file
 
@@ -143,7 +143,10 @@ Execute the generated cypher query. If the output contains any nodes, relationsh
 Given the user query, schema of the database, relevant data, cypher query, and the output of the cypher query, generate the answer to the user query.
 
 `llm.py`
-Contains the configuration for LLM model. The model can be used locally or from github.
+Contains the configuration for LLM model to use.
+
+`llms directory`
+Dir to hold various llm models classes, making the code extensible.
 
 `utils.py`
 Contains various utility functions, notably `get_schema_text`, `execute_cypher_query` and `extract_cleaned_cypher`.
