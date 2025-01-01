@@ -64,9 +64,9 @@ def create_nodes():
     gurucharand.parents.connect(roshan_m)
     gurucharand.parents.connect(roshan_f)
 
-    tarak: Person = Person(first_name="Tarak", surname="Mehta", gender="M").save()
+    taarak: Person = Person(first_name="Taarak", surname="Mehta", gender="M").save()
     anjali: Person = Person(first_name="Anjali", surname="Mehta", gender="F").save()
-    tarak.spouse.connect(anjali)
+    taarak.spouse.connect(anjali)
 
     krishnan: Person = Person(first_name="Krishnan", surname="Iyer", gender="M").save()
     babita: Person = Person(first_name="Babita", surname="Iyer", gender="F").save()
@@ -89,7 +89,7 @@ def create_nodes():
     aatmaram.groups.connect(purush_mandal)
     hansraj.groups.connect(purush_mandal)
     roshan_m.groups.connect(purush_mandal)
-    tarak.groups.connect(purush_mandal)
+    taarak.groups.connect(purush_mandal)
     krishnan.groups.connect(purush_mandal)
     popatlal.groups.connect(purush_mandal)
 

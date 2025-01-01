@@ -10,7 +10,7 @@ llms_with_params: list[tuple[Type[LLM], dict]] = [
     (AzureAIInferenceLLM, {"model": "llama3.1 8"}),
 ]
 
-llm_index_to_use = 0
+llm_index_to_use = 1
 
 llm_with_param = llms_with_params[llm_index_to_use]
 

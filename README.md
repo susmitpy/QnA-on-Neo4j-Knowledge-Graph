@@ -35,7 +35,7 @@ A: The secretary is Aatmaram Bhide.
 
 ```
 Q: Anjali chya navryacha nav kay?
-A: Anjali chya navryacha nav Tarak Mehta ahe.
+A: Anjali chya navryacha nav Taarak Mehta ahe.
 ```
 
 ```
