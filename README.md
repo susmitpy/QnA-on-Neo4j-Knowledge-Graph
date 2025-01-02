@@ -48,7 +48,7 @@ Q: What is the nickname of Bhidu's wife ?
 A: The nickname of Bhidu's wife is Madhu.
 ```
 
-### LLama 3.3 70B without RAG
+### LLama 3.3 70B without RAG (Incorrect Answers) 
 ```
 Q:
 In TMKOC
