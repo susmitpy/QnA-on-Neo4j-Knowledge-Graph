@@ -1,3 +1,4 @@
+import json
 import logging
 from sys import exit
 
@@ -29,6 +30,9 @@ while True:
             cypher=cypher_to_fetch_additional_info,
             cypher_result=cypher_result,
         )
+
+        with open("./data.json", "w") as f:
+            json.dump({"user_query": user_query, "relevant_data": relevant_nodes, "cypher": cypher_to_fetch_additional_info, "cypher_result": cypher_result}, f)
 
         print(final_answer)
     except Exception as e:

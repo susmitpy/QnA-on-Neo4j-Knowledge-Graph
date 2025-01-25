@@ -1,0 +1,57 @@
+{
+  "user_query": "What is the nickname of Bhidu's wife ?",
+  "relevant_data": [
+    [
+      "['Person']",
+      {
+        "unique_id": "5fab938c047a4d0bb2b0c5c1d24173bf",
+        "first_name": "Aatmaram",
+        "surname": "Bhide",
+        "nick_name": "Bhidu",
+        "gender": "M"
+      }
+    ],
+    [
+      "['Person']",
+      {
+        "unique_id": "2d0579a779104b028908b0ac0d25e952",
+        "first_name": "Madhavi",
+        "surname": "Bhide",
+        "nick_name": "Madhu",
+        "gender": "F"
+      }
+    ],
+    [
+      "['Person']",
+      {
+        "unique_id": "2d1d39f1e852409ea94414e23f0092f3",
+        "first_name": "Sonalika",
+        "surname": "Bhide",
+        "nick_name": "Sonu",
+        "gender": "F"
+      }
+    ],
+    [
+      "['Person']",
+      {
+        "unique_id": "7504b51b59274e5eb2f2e3e07294588a",
+        "first_name": "Babita",
+        "surname": "Iyer",
+        "nick_name": null,
+        "gender": "F"
+      }
+    ],
+    [
+      "['Person']",
+      {
+        "unique_id": "7113a0bac107481fa90afec5c2b50590",
+        "first_name": "Daya",
+        "surname": "Gada",
+        "nick_name": null,
+        "gender": "F"
+      }
+    ]
+  ],
+  "cypher": "MATCH (p1:Person {nick_name: 'Bhidu'})-[:IS_SPOUSE_OF]-(p2:Person)\nRETURN p2.nick_name",
+  "cypher_result": [[["Madhu"]], ["p2.nick_name"]]
+}

@@ -1,3 +1,4 @@
+import json
 import logging
 from sys import exit
 
@@ -5,6 +6,7 @@ from neo4j.graph import Node, Relationship
 
 from models import Model, node_rel_type_mapping
 from vector_utils import search_nodes_rel
+from utils import update_json
 
 
 def get_relevant_data(user_query: str, top_k: int = 5) -> list[tuple[set, dict]]:
@@ -49,4 +51,11 @@ if __name__ == "__main__":
             print("Bye !")
             exit()
 
-        get_relevant_data(user_query)
+        with open("./data.json", "w") as f:
+            json.dump({
+                "user_query": user_query,
+            }, f)
+            
+        op = get_relevant_data(user_query)
+        update_json("relevant_data", op)
+        

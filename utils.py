@@ -1,11 +1,38 @@
+import json
 import logging
+import os
 import re
+from typing import Any
 
 from neomodel import config, db
 
 # Configure the connection to Neo4j
 config.DATABASE_URL = "bolt://neo4j:neotest123@localhost:7687"
 
+def get_data_from_json(keys: list[str]) -> list[Any]:
+    """
+    Retrieves the values for the given keys from the JSON file.
+
+    Args:
+        keys (list[str]): A list of keys to retrieve the values for.
+
+    Returns:
+        [Any]: A list of values corresponding to the given keys.
+    """
+    with open("./data.json", "r") as f:
+        data = json.load(f)
+        return [data[key] for key in keys]
+
+def update_json(key: str, value:Any):
+    """
+    Updates the JSON with the given key-value pair.
+    """
+    with open("./data.json", "r") as f:
+        data = json.load(f)
+
+    data[key] = value
+    with open("./data.json", "w") as f:
+        json.dump(data, f, indent=4)
 
 def extract_cleaned_cypher(resp_content: str) -> str:
     """
