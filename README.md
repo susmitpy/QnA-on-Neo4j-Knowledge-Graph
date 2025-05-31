@@ -1,4 +1,7 @@
 # QnA on Knowledge Graph
+
+I had the opportunity to speak about this at a meetup, the video recording for the same is can be found at: ![Youtube Video]() &nbsp;&nbsp; ![Slide Deck](https://susmitpy.github.io/talks/qna)
+
 Demonstration of a question answering system based on RAG with a knowledge graph in Neo4j (graph database) as the source of information. Neo4j's ability to store vector embeddings removes the need for a separate vector database.
 
 Flow:  
